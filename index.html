@@ -170,100 +170,12 @@
 				VIEW_PRESERVES_CONTEXT: true
 			};
 		</script>
-	</head>
-	<body>
 		<script src="lib/jquery-1.7.2.min.js"></script>
 		<script src="lib/ember-0.9.8.1.min.js"></script>
 
-		<script type="text/x-handlebars" data-template-name="main">
-			main
-		</script>
-
-		<script type="text/x-handlebars" data-template-name="game">
-			game
-		</script>
-
-		<script type="text/x-handlebars" data-template-name="waitingForPlayers">
-			waiting for players
-			<ul>
-				{{#each view.players}}
-				<li class="playerJoined">{{name}} joined</li>
-				{{/each}}
-			</ul>
-		</script>
-
-		<script type="text/x-handlebars" data-template-name="board">
-			<div id="badges">
-				<h2>Players</h2>
-				{{#each view.players}}
-					<p class="player">{{seatName}}: {{name}}
-						round: {{ roundPoints }}
-						game: {{ gamePoints }}
-					</p>
-				{{/each}}
-			</div>
-		</script>
-
-		<script type="text/x-handlebars" data-template-name="round">
-			Hearts{{#if view.board.heartsBroken}} {{else}} not {{/if}}broken
-
-			<div>
-				{{#each view.players}}
-					<p class="player">
-						{{view PlayerView playerBinding="this"}}
-					</p>
-				{{/each}}
-			</div>
-		</script>
-
-		<script type="text/x-handlebars" data-template-name="player">
-			<div {{bindAttr class="view.playersTurn:playersTurn"}}>
-				{{view.player.seatName}}: {{view.player.name}}
-				{{#if view.player.passed}} passed {{/if}}
-				<ul class="hand">
-					{{#each view.player.hand}}
-						<div {{bindAttr class=":card card.indexName"}}>
-							{{#if selectable}}
-								{{#view CardView cardBinding="this"}}
-									card={{repr}}, index={{index}}, selected={{selected}}
-								{{/view}}
-							{{else}}
-								facedown
-							{{/if}}
-						</div>
-					{{/each}}
-					</li>
-				</ul>
-			</div>
-		</script>
-
-		<script type="text/x-handlebars" data-template-name="passing">
-			<div id="passing">
-				<p>passing? {{view.board.passing}}</p>
-				<p>pass = {{view.board.pass.repr}}</p>
-				<p>can pass = {{view.user.hand.canPass}}</p>
-				<p>passed = {{view.user.passed}}</p>
-				{{#if view.user.hand.canPass}}
-					<p {{action "pass"}}>pass!</p>
-				{{/if}}
-			</div>
-		</script>
-
-		<script type="text/x-handlebars" data-template-name="trick">
-			{{view.takingSeatName}}
-			<ul id="trick" {{bindAttr class="view.trick.ending:ending view.takingSeatName"}}>
-			{{#each view.trick}}
-				{{#view TrickCardView cardBinding="this"}}
-					<li {{bindAttr class=":card seatName"}}>card={{repr}}</li>
-				{{/view}}
-			{{/each}}
-			</ul>
-		</script>
-
-		<script type="text/x-handlebars" data-template-name="tallyPoints">
-			tally points
-		</script>
-
+		<script src="templates/template.js"></script>
+	</head>
+	<body>
 		<script src="scripts/game/pass.js"></script>
 		<script src="scripts/game/card.js"></script>
 		<script src="scripts/game/player.js"></script>

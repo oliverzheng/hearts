@@ -1,0 +1,9 @@
+Hearts{{#if view.board.heartsBroken}} {{else}} not {{/if}}broken
+
+<div>
+	{{#each view.players}}
+		<p class="player">
+			{{view PlayerView playerBinding="this"}}
+		</p>
+	{{/each}}
+</div>

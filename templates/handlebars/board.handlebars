@@ -1,0 +1,9 @@
+<div id="badges">
+	<h2>Players</h2>
+	{{#each view.players}}
+		<p class="player">{{seatName}}: {{name}}
+			round: {{ roundPoints }}
+			game: {{ gamePoints }}
+		</p>
+	{{/each}}
+</div>
