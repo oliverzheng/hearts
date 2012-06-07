@@ -11,6 +11,36 @@ model.UserCard = UserCard = Em.Object.extend
 	known: (-> @card? && @card.number? && @card.suit?).
 		property 'card', 'card.number', 'card.suit'
 
+	unknown: (-> !@.get 'known').property 'known'
+
+	numberName: (->
+		names =
+			1: 'ace'
+			2: 'two'
+			3: 'three'
+			4: 'four'
+			5: 'five'
+			6: 'six'
+			7: 'seven'
+			8: 'eight'
+			9: 'nine'
+			10: 'ten'
+			11: 'jack'
+			12: 'queen'
+			13: 'king'
+		return names[@card?.number]
+	).property 'card'
+
+	numberSymbol: (->
+		switch @card?.number
+			when 1 then 'A'
+			when 10 then '=' # The font requires this
+			when 11 then 'J'
+			when 12 then 'Q'
+			when 13 then 'K'
+			else @card?.number
+	).property 'card'
+
 	repr: (-> @card.repr() if @card).property()
 
 	# For css classes
