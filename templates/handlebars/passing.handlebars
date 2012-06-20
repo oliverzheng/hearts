@@ -1,9 +1,11 @@
-<div id="passing">
-	<p>passing? {{view.board.passing}}</p>
-	<p>pass = {{view.board.pass.repr}}</p>
-	<p>can pass = {{view.user.hand.canPass}}</p>
-	<p>passed = {{view.user.passed}}</p>
-	{{#if view.user.hand.canPass}}
-		<p {{action "pass"}}>pass!</p>
-	{{/if}}
-</div>
+<div class="verticalCenter"><div>
+		<div id="passing" class="center">
+			<p>passing? {{view.board.passing}}</p>
+			<p>pass = {{view.board.pass.repr}}</p>
+			<p>can pass = {{view.user.hand.canPass}}</p>
+			<p>passed = {{view.user.passed}}</p>
+			{{#if view.user.hand.canPass}}
+				<p {{action "pass"}}>pass!</p>
+			{{/if}}
+		</div>
+</div></div>

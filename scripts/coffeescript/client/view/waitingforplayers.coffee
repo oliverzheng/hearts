@@ -5,4 +5,4 @@ root.WaitingForPlayersView = Em.View.extend
 	playersBinding: 'App.viewStates.currentState.parentState.players'
 
 	didInsertElement: ->
-		queueAnimation @$(), '.playerJoined', 4
+		#queueAnimation @$(), '.playerJoined', 4

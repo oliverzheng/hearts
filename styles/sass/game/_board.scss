@@ -1,0 +1,154 @@
+@mixin selfCardTransform($i, $total, $vertical: 0px) {
+	$half: $total/2;
+	@include simple-transform(1, ($i - $half) * 2deg, 0, 0.8px * (($i - $half) * ($i - $half) - $half * $half) + $vertical);
+}
+
+$totalCards: 13;
+
+#board {
+	$cardHeight: 18vh;
+	$cardWidth: $cardHeight * $cardWidthToHeight;
+
+	@include full-screen();
+
+	.card {
+		height: $cardHeight;
+		width: $cardWidth;
+	}
+
+	.player {
+		@include full-screen();
+
+		.hand {
+			@include full-screen();
+		}
+
+		&.self {
+			$left: 40%;
+			$right: 90%;
+			$rotation: 10deg;
+
+			.card {
+				bottom: 5%;
+
+				&.played {
+					left: 45%;
+					bottom: 35%;
+					@include rotate(15deg);
+				}
+
+				&.inHand {
+					@include single-transition(all, 0.1s, ease-out);
+				}
+			}
+
+			@for $total from 1 through $totalCards {
+				.hand#{$total} {
+					$range: ($right - $left) * (($totalCards - $total) / $totalCards);
+					$totalLeft: $left + $range / 2;
+					$totalRight: $right - $range / 2;
+
+					@for $i from 0 to $total {
+						.card#{$i} {
+							$maxTotal: $total - 1;
+
+							z-index: $i + 1;
+
+							&.inHand {
+								@include percentPos(left, $i/$maxTotal * 100%, $cardWidth, $totalLeft, $totalRight);
+								@include selfCardTransform($i, $maxTotal);
+							}
+
+							&.selectable:hover {
+								@include selfCardTransform($i, $maxTotal, -10px);
+							}
+
+							&.selected {
+								@include selfCardTransform($i, $maxTotal, -20px);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		&.across {
+			$left: 40%;
+			$right: 70%;
+
+			.card {
+				top: 1%;
+
+				&.played {
+					left: 47%;
+					top: 27%;
+					@include rotate(185deg);
+				}
+			}
+
+			@for $i from 0 to 13 {
+				.card#{$i} {
+					@include percentPos(left, $i/12 * 100%, $cardWidth, $left, $right);
+					$half: 12/2;
+					@include simple-transform(1, ($half - $i) * 4deg, 0, 0.7px * ($half * $half - ($i - $half) * ($i - $half)));
+					z-index: 13 - $i;
+				}
+			}
+		}
+
+		&.left {
+			$top: 30%;
+			$bottom: 80%;
+
+			.card {
+				left: 3%;
+
+				&.played {
+					left: 37%;
+					top: 40%;
+					@include rotate(85deg);
+				}
+			}
+
+			@for $i from 0 to 13 {
+				.card#{$i} {
+					@include percentPos(top, $i/12 * 100%, $cardHeight, $top, $bottom);
+					$half: 12/2;
+					@include simple-transform(1, 90deg - ($half - $i) * 4deg, 0, -0.8px * ($half * $half - ($i - $half) * ($i - $half)));
+					z-index: $i + 1;
+				}
+			}
+		}
+
+		&.right {
+			$top: 10%;
+			$bottom: 60%;
+			$rotation: 10deg;
+
+			.card {
+				right: 3%;
+
+				&.played {
+					right: 37%;
+					top: 40%;
+					@include rotate(85deg);
+				}
+			}
+
+			@for $i from 0 to 13 {
+				.card#{$i} {
+					@include percentPos(top, $i/12 * 100%, $cardHeight, $top, $bottom);
+					$half: 12/2;
+					@include simple-transform(1, 90deg + ($half - $i) * 4deg, 0, 0.8px * ($half * $half - ($i - $half) * ($i - $half)));
+					z-index: 13 - $i;
+				}
+			}
+		}
+	}
+}
+
+#passing {
+	z-index: 5;
+	width: 300px;
+	height: 300px;
+}

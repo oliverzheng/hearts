@@ -1,0 +1,63 @@
+@import 'compass';
+
+$cardWidthToHeight: 63/88;
+
+@mixin full-screen() {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+.ember-view {
+	@include full-screen();
+}
+
+
+@mixin calc($property, $expression) {
+	#{$property}: -moz-calc(#{$expression});
+	#{$property}: -webkit-calc(#{$expression});
+	#{$property}: -o-calc(#{$expression});
+	#{$property}: calc(#{$expression});
+}
+
+@mixin percentPos($property, $position, $size, $start: 0%, $end: 100%) {
+	$adjustedPosition: ($end - $start) * ($position / 100%) + $start;
+	@include calc($property, '#{$adjustedPosition} - #{$size * ($position / 100%)}');
+}
+
+@mixin relativeBase($position) {
+	position: $position;
+	display: inline-block;
+}
+
+@mixin relativeWidth($position: relative) {
+	@include relativeBase($position);
+	& > img.aspectRatio {
+		height: 100%;
+		width: auto;
+	}
+
+	& > .ember-view {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+}
+
+.center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.verticalCenter {
+	display: table;
+	width: 100%;
+	height: 100%;
+
+	&> :first-child {
+		display: table-cell;
+		vertical-align: middle;
+	}
+}

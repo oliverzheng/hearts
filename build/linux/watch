@@ -1,0 +1,15 @@
+#!/bin/bash
+
+CMD_0="compass watch ../../styles"
+CMD_1="coffee -wco ../../scripts/js ../../scripts/coffeescript"
+CMD_2="make -sC ../../templates watch"
+
+$CMD_0 & PID_0=$!
+$CMD_1 & PID_1=$!
+$CMD_2 2>/dev/null & PID_2=$!
+
+trap "kill $PID_0 $PID_1 $PID_2" SIGINT
+
+wait $PID_0 $PID_1 $PID_2
+
+echo

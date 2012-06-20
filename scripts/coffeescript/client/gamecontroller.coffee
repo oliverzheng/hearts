@@ -23,9 +23,13 @@ root.GameController = Em.Object.extend
 	playCard: (->
 		user = @get 'user'
 		if user.played
-			card = (user.hand.findProperty 'selected', true).card
-			@game.remotePlayerPlayed user.id, card
-			@connection?.playCard card
+			selected = (user.hand.findProperty 'selected', true)
+			# This could be null, since user.played triggers when any player's
+			# played triggers
+			if selected
+				card = selected.card
+				@game.remotePlayerPlayed user.id, card
+				@connection?.playCard card
 	).observes 'user.played'
 
 	# Interface to the game output
@@ -38,7 +42,7 @@ root.GameController = Em.Object.extend
 		# TODO this seat thing is local only?
 		@seat ?= Seat.Self
 
-		@gameQueue.queueDeferredEnd 'getProfile', (getHttpServer().getProfile player.id).then bind @, (profile) ->
+		@gameQueue.queueDeferredEnd 'getProfile', (getHttpServer().getProfile player.id).then (profile) =>
 			(@get 'players').pushObject model.Player.create
 				id: player.id
 				name: profile.name
@@ -47,7 +51,7 @@ root.GameController = Em.Object.extend
 			@seat += 1
 
 	allPlayersJoined: ->
-		@gameQueue.queueEnd 'allPlayersJoined', bind @, ->
+		@gameQueue.queueEnd 'allPlayersJoined', =>
 			App.viewStates.goToState 'playing'
 
 	newRound: ->
@@ -60,7 +64,7 @@ root.GameController = Em.Object.extend
 				card: card
 				index: i
 
-		@gameQueue.queueEnd 'dealt', bind @, ->
+		@gameQueue.queueEnd 'dealt', =>
 			(@get 'players').forEach (player) ->
 				if player.seat is Seat.Self
 					player.set 'hand', userHand
@@ -69,19 +73,19 @@ root.GameController = Em.Object.extend
 			App.viewStates.goToState 'round'
 
 	passing: (pass) ->
-		@gameQueue.queueEnd 'passing', bind @, ->
+		@gameQueue.queueEnd 'passing', =>
 			(@get 'board').set 'passing', pass isnt Pass.Keep
 			(@get 'board').set 'pass', pass
 			App.viewStates.goToState 'passing'
 
 	playerPassed: (player) ->
 		if player.id isnt (@get 'user').id
-			@gameQueue.queueEnd 'passed', bind @, ->
+			@gameQueue.queueEnd 'passed', =>
 				((@get 'players').findProperty 'id', player.id).set 'passed', true
 
 	receivedCards: (player) ->
 		if player.id is (@get 'user').id
-			@gameQueue.queueEnd 'received', bind @, ->
+			@gameQueue.queueEnd 'received', =>
 				cards = (model.UserCard.create {card: card} for card in player.receivedCards)
 				((@get 'players').findProperty 'id', player.id).hand.receive cards
 
@@ -89,37 +93,45 @@ root.GameController = Em.Object.extend
 
 	newTrick: (startingPlayer) ->
 		player = (@get 'players').findProperty 'id', startingPlayer.id
-		@gameQueue.queueEnd 'startTrick', bind @, ->
+		@gameQueue.queueEnd 'startTrick', =>
 			App.viewStates.goToState 'newTrick'
 			App.viewStates.goToState 'trick'
 			App.viewStates.send 'startWith', player
 
+	playersTurn: (gamePlayer) ->
+		#@gameQueue.queueEnd 'nextPlayer', =>
+			#trick = (@get 'board').trick
+			#if !trick.get 'complete'
+				#nextPlayer = (@get 'players').findProperty 'seat', Seat.nextSeat player.seat
+				#App.viewStates.send 'nextPlayer', nextPlayer
+
 	cardPlayed: (gamePlayer, card) ->
 		player = (@get 'players').findProperty 'id', gamePlayer.id
-		@gameQueue.queueEnd ('cardPlayed' + card.repr()), bind @, ->
+		@gameQueue.queueEnd ('cardPlayed' + card.repr()), =>
 			player.hand.played card
 
-			trick = (@get 'board').trick
-			trick.pushObject model.TrickCard.create
-				card: card
-				seat: player.seat
-
-		@gameQueue.queueEnd 'nextPlayer', bind @, ->
-			trick = (@get 'board').trick
-			if !trick.get 'complete'
-				nextPlayer = (@get 'players').findProperty 'seat', Seat.nextSeat player.seat
-				App.viewStates.send 'nextPlayer', nextPlayer
+			#trick = (@get 'board').trick
+			#trick.pushObject model.TrickCard.create
+				#card: card
+				#seat: player.seat
 
 	trickEnded: (taker, points) ->
-		@gameQueue.queueEnd 'trickEnded', bind @, ->
+		@gameQueue.queueEnd 'trickEnding', =>
+			(@get 'players').forEach (player) ->
+				player.hand.trickFinishing()
+
 			takingPlayer = (@get 'players').findProperty 'id', taker.id
 			if points > 0
 				takingPlayer.incrementProperty 'roundPoints', points
 			(App.viewStates.get 'currentState').set 'takingPlayer', takingPlayer
 			App.viewStates.goToState 'trickEnding'
 
+		@gameQueue.queueEnd 'trickEnded', =>
+			(@get 'players').forEach (player) ->
+				player.hand.trickFinished()
+
 	roundEnded: ->
-		@gameQueue.queueEnd 'roundEnded', bind @, ->
+		@gameQueue.queueEnd 'roundEnded', =>
 			App.viewStates.goToState 'tallyPoints'
 
 

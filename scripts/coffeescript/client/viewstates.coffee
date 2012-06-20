@@ -78,7 +78,7 @@ root.App.ViewStates = Em.StateManager.extend
 					currentPlayer: null
 					takingPlayer: null
 
-					view: TrickView
+					#view: TrickView
 
 					enter: (stateManager, transition) ->
 						@_super stateManager, transition

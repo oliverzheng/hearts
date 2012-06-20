@@ -1,0 +1,12 @@
+<div {{bindAttr class=":hand view.cardsInHandName"}}>
+	{{#if view.player.isSelf}}
+		<img class="aspectRatio" src="assets/images/handself.svg" />
+	{{/if}}
+	{{#if view.player.isAcross}}
+		<img class="aspectRatio" src="assets/images/handacross.svg" />
+	{{/if}}
+
+	{{#each hand}}
+		{{view CardView cardBinding="this"}}
+	{{/each}}
+</div>

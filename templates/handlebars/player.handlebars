@@ -1,18 +1,9 @@
-<div {{bindAttr class="view.playersTurn:playersTurn"}}>
-	{{view.player.seatName}}: {{view.player.name}}
-	{{#if view.player.passed}} passed {{/if}}
-	<ul class="hand">
-		{{#each view.player.hand}}
-			<div {{bindAttr class=":card card.indexName"}}>
-				{{#if selectable}}
-					{{#view CardView cardBinding="this"}}
-						card={{repr}}, index={{index}}, selected={{selected}}
-					{{/view}}
-				{{else}}
-					facedown
-				{{/if}}
-			</div>
-		{{/each}}
-		</li>
-	</ul>
+<div {{bindAttr class="view.playersTurn:playersTurn view.player.seatName :player"}}>
+	<div class="badge">
+		{{view.player.name}}
+		round: {{ view.player.roundPoints }}
+		game: {{ view.player.gamePoints }}
+		{{#if view.player.passed}} passed {{/if}}
+	</div>
+	{{view HandView handBinding="view.player.hand" playerBinding="view.player"}}
 </div>

@@ -1,0 +1,249 @@
+@font-face {
+	font-family: CardChars;
+	src: font-url('cardschars.eot') format('embedded-opentype'),
+		font-url('cardschars.ttf') format('truetype');
+}
+
+.card {
+	position: absolute;
+	border: 1px solid #AAA;
+	background: #FFF;
+
+	&.unknown {
+		background: #EEE;
+
+		.labels, .symbols {
+			display: none;
+		}
+	}
+
+	$borderRadius: 7%;
+	@include border-radius($borderRadius, $borderRadius * $cardWidthToHeight);
+
+	@include single-box-shadow(rgba(0, 0, 0, 0.1), 0, 0, 2px, 2px);
+
+	.bottom { @include rotate(180deg); }
+
+	.labels, .symbols {
+		position: absolute;
+	}
+
+	.symbol {
+		background: no-repeat center center;
+		background-size: 96%; // TODO: Why does IE chop off our svgs?
+	}
+
+	.symbols {
+		$edgeMargin: 10%;
+		$sideMargin: 20%;
+		$symbolHeight: 20%;
+
+		$symbolsWidthToHeight: (1 - $edgeMargin / 100% * 2) / (1 - $sideMargin / 100% * 2) / $cardWidthToHeight;
+		$symbolWidth: $symbolHeight * $symbolsWidthToHeight;
+
+		top: $edgeMargin;
+		bottom: $edgeMargin;
+		left: $sideMargin;
+		right: $sideMargin;
+
+		& > * { height: 100%; }
+
+		.left .symbol { left: 0; }
+		.right .symbol { right: 0; }
+		.center .symbol { @include percentPos(left, 50%, $symbolWidth); }
+
+		.symbol {
+			width: $symbolWidth;
+			height: $symbolHeight;
+			position: absolute;
+
+			&.top.edge { top: 0; }
+			&.top.sixth { @include percentPos(top, 100%/6, $symbolHeight); }
+			&.top.quarter { @include percentPos(top, 25%, $symbolHeight); }
+			&.top.third { @include percentPos(top, 100%/3, $symbolHeight); }
+			&.middle { @include percentPos(top, 50%, $symbolHeight); }
+			&.bottom.third { @include percentPos(bottom, 100%/3, $symbolHeight); }
+			&.bottom.quarter { @include percentPos(bottom, 25%, $symbolHeight); }
+			&.bottom.sixth { @include percentPos(bottom, 100%/6, $symbolHeight); }
+			&.bottom.edge { bottom: 0; }
+		}
+	}
+
+	.labels {
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+
+	.label {
+		$leftMargin: 5%;
+		$topMargin: $leftMargin * $cardWidthToHeight;
+		$symbolWidth: 13%;
+		$symbolHeight: $symbolWidth * $cardWidthToHeight;
+		$lineHeight: 1.3em;
+		font-size: 3vh;
+		line-height: $lineHeight;
+		@include full-screen();
+
+		.number {
+			font-family: CardChars;
+			text-align: center;
+			position: absolute;
+			left: $leftMargin;
+			top: $topMargin;
+			width: $symbolWidth;
+		}
+
+		.symbol {
+			width: $symbolWidth;
+			height: $symbolHeight;
+			background-size: 100%;
+			position: absolute;
+			left: $leftMargin;
+			@include calc(top, '#{$topMargin} + #{$lineHeight}');
+		}
+	}
+
+
+	// NUMBERS
+
+	&.ace {
+		.symbols {
+			.left,
+			.right,
+			.center .edge,
+			.center .quarter {
+				display: none;
+			}
+		}
+	}
+
+	&.two {
+		.symbols {
+			.left,
+			.right,
+			.center .middle,
+			.center .quarter {
+				display: none;
+			}
+		}
+	}
+
+	&.three {
+		.symbols {
+			.left,
+			.right,
+			.center .quarter {
+				display: none;
+			}
+		}
+	}
+
+	&.four {
+		.symbols {
+			.center,
+			.quarter,
+			.third,
+			.middle {
+				display: none;
+			}
+		}
+	}
+
+	&.five {
+		.symbols {
+			.quarter,
+			.third,
+			.left .middle,
+			.right .middle,
+			.center .edge {
+				display: none;
+			}
+		}
+	}
+
+	&.six {
+		.symbols {
+			.center,
+			.quarter,
+			.third {
+				display: none;
+			}
+		}
+	}
+
+	&.seven {
+		.symbols {
+			.third,
+			.center .edge,
+			.center .middle,
+			.center .bottom.quarter {
+				display: none;
+			}
+		}
+	}
+
+	&.eight {
+		.symbols {
+			.third,
+			.center .edge,
+			.center .middle {
+				display: none;
+			}
+		}
+	}
+
+	&.nine {
+		.symbols {
+			.quarter,
+			.left .middle,
+			.right .middle,
+			.center .edge {
+				display: none;
+			}
+		}
+	}
+
+	// It's none unless it's for ten
+	.sixth { display: none; }
+	&.ten {
+		.symbols {
+			.middle,
+			.center .edge,
+			.center .quarter {
+				display: none;
+			}
+			.sixth {
+				display: block;
+			}
+		}
+	}
+
+
+	// SUITS
+
+	&.clubs .symbol {
+		background-image: image-url("clubs.svg");
+	}
+
+	&.diamonds .symbol {
+		background-image: image-url("diamonds.svg");
+	}
+
+	&.spades .symbol {
+		background-image: image-url("spades.svg");
+	}
+
+	&.hearts .symbol {
+		background-image: image-url("hearts.svg");
+	}
+
+	&.diamonds, &.hearts {
+		color: #BE2026;
+	}
+
+	&.clubs, &.spades {
+		color: #000;
+	}
+}

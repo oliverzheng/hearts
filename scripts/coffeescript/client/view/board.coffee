@@ -6,4 +6,4 @@ root.BoardView = Em.View.extend
 	playersBinding: 'App.viewStates.game.players'
 
 	didInsertElement: ->
-		deferred = queueAnimation @$(), @$('.player')
+		#deferred = queueAnimation @$(), @$('.player')

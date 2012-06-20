@@ -1,17 +1,17 @@
 root = exports ? this
 model = root.model ?= {}
 
-model.UserCard = UserCard = Em.Object.extend
+compareSuit = (a, b) ->
+	order =
+		# This the suit's id : order
+		0: 0
+		1: 1
+		2: 2
+		3: 3
+	return order[a.id] - order[b.id]
+
+Card = Em.Object.extend
 	card: null
-	selected: false
-	index: null
-
-	selectableBinding: 'known'
-
-	known: (-> @card? && @card.number? && @card.suit?).
-		property 'card', 'card.number', 'card.suit'
-
-	unknown: (-> !@.get 'known').property 'known'
 
 	numberName: (->
 		names =
@@ -41,10 +41,27 @@ model.UserCard = UserCard = Em.Object.extend
 			else @card?.number
 	).property 'card'
 
-	repr: (-> @card.repr() if @card).property()
+	repr: (-> @card.repr() if @card).property 'card'
+
+
+model.UserCard = UserCard = Card.extend
+	card: null
+	selected: false
+	index: null
+	played: false
+	finishing: false
+
+	inHand: (-> !@played).property 'played'
+
+	selectable: (-> (@get 'known') && !@played).property 'known', 'played'
+
+	known: (-> @card? && @card.number? && @card.suit?).
+		property 'card', 'card.number', 'card.suit'
+
+	unknown: (-> !@.get 'known').property 'known'
 
 	# For css classes
-	indexName: (-> "card#{@index}").property()
+	indexName: (-> "card#{@index}").property 'index'
 
 
 model.Hand = Hand = Em.ArrayProxy.extend
@@ -61,6 +78,7 @@ model.Hand = Hand = Em.ArrayProxy.extend
 	receive: (receivedCards) ->
 		@removeObjects @filterProperty 'selected', true
 		@pushObjects receivedCards
+		@sort()
 
 	played: (card) ->
 		item = null
@@ -72,26 +90,52 @@ model.Hand = Hand = Em.ArrayProxy.extend
 		# card.
 		if !item
 			item = @objectAt Math.floor Math.random() * @.get 'length'
+			item.set 'card', card
 
-		@removeObject item
+		item.set 'played', true
+		item.set 'selected', false
+
+		# Move indices up
+		@.filter (card, i, self) ->
+			if card.index > item.index
+				card.decrementProperty 'index'
+
+	sort: ->
+		sorted = @.slice 0
+		sorted.sort (a, b) ->
+			suit = compareSuit(a.card.suit, b.card.suit)
+			console.log a.card.suit.repr, b.card.suit.repr, suit
+			if suit isnt 0
+				return suit
+
+			return compareNumber a.card.number, b.card.number
+
+		@.forEach (card) ->
+			i = sorted.indexOf card
+			console.log card.index, i
+			if card.index isnt i
+				console.log 'changed'
+				card.set 'index', i
+
+	cardsInHand: (-> (@filterProperty 'played', false).get 'length').property '@each.played'
+
+	trickFinishing: ->
+		card = @findProperty 'played', true
+		card.set 'finishing', true
+
+	trickFinished: ->
+		card = @findProperty 'finishing', true
+		@removeObject card
 
 Hand.reopenClass
 	createUnknownHand: ->
 		hand = Hand.create()
-		for i in [1..13]
+		for i in [0..12]
 			card = UserCard.create
 				index: i
 
 			hand.pushObject card
 		return hand
-
-
-model.TrickCard = TrickCard = Em.Object.extend
-	card: null
-	seat: null
-
-	repr: (-> @card.repr() if @card).property 'card'
-	seatName: (-> Seat.toString @seat).property 'seat'
 
 
 model.Trick = Trick = Em.ArrayProxy.extend
@@ -126,6 +170,7 @@ model.Player = Player = Em.Object.extend
 	seat: null
 	passed: false
 	played: false
+	hisTurn: false
 	hand: null
 	roundPoints: 0
 	gamePoints: 0
@@ -136,6 +181,11 @@ model.Player = Player = Em.Object.extend
 		@set 'passed', false
 		@set 'played', false
 		@set 'roundPoints', 0
+
+	isSelf: (-> @seat is Seat.Self).property 'seat'
+	isAcross: (-> @seat is Seat.Across).property 'seat'
+	isRight: (-> @seat is Seat.Right).property 'seat'
+	isLeft: (-> @seat is Seat.Left).property 'seat'
 
 
 model.Players = Players = Em.ArrayProxy.extend

@@ -39,3 +39,10 @@ Card.allCards = ->
 
 root.UnknownCard = UnknownCard = new Card
 root.TwoOfClubs = TwoOfClubs = new Card 2, Clubs
+
+root.compareNumber = (a, b) ->
+	if a is 1
+		return -1
+	if b is 1
+		return -1
+	return a - b

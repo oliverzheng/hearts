@@ -6,4 +6,4 @@ root.RoundView = Em.View.extend
 	playersBinding: 'App.viewStates.game.players'
 
 	didInsertElement: ->
-		queueAnimation @$(), @$('.card')
+		#queueAnimation @$(), @$('.card')

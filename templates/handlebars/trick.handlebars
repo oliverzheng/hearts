@@ -1,8 +1,8 @@
-{{view.takingSeatName}}
-<ul id="trick" {{bindAttr class="view.trick.ending:ending view.takingSeatName"}}>
-{{#each view.trick}}
-	{{#view TrickCardView cardBinding="this"}}
-		<li {{bindAttr class=":card seatName"}}>card={{repr}}</li>
-	{{/view}}
-{{/each}}
-</ul>
+<div class="verticalCenter"><div>
+		{{view.takingSeatName}}
+		<div id="trick" {{bindAttr class=":center view.trick.ending:ending view.takingSeatName"}}>
+			{{#each view.trick}}
+				{{view TrickCardView cardBinding="this" seatNameBinding="seatName"}}
+			{{/each}}
+		</div>
+</div></div>

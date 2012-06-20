@@ -1,7 +1,5 @@
 root = exports ? this
 
-root.bind = bind = (context, func) -> $.proxy func, context
-
 root.defer = defer = (func) -> setTimeout func, 0
 
 root.copy = copy = (obj) -> $.extend true, {}, obj
@@ -24,13 +22,13 @@ root.DeferredQueue = class DeferredQueue
 		[name, func] = @funcs.shift()
 		@running = true
 
-		defer bind @, ->
+		defer =>
 			#console.log @name, 'executing', name
 			deferred = func()
 
 			if deferred?.always?
 				#console.log @name, 'deferred'
-				deferred.always bind @, ->
+				deferred.always =>
 					#console.log @name, 'deferred', name, 'finished', @funcs.length
 					@running = false
 					@ensureRunning()
@@ -39,7 +37,7 @@ root.DeferredQueue = class DeferredQueue
 				#console.log @name, 'no deferred, next'
 				# This has to be deferred. func() could have deferred functions
 				# that queue up functions. We want to execute those first.
-				defer bind @, @ensureRunning
+				defer => @ensureRunning()
 
 	appendEndFunc: ->
 		if @endFuncs.length is 0
