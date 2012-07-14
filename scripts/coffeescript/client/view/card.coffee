@@ -5,21 +5,26 @@ root.CardView = Em.View.extend
 
 	didInsertElement: ->
 
-	click: ->
+	selectCard: ->
 		App.viewStates.send 'selectCard', @.card
 
 	selectableBinding: 'card.selectable'
 
 	queuePlayAnimation: (->
 		if @getPath 'card.played'
-			# IE10 (RP, at least) has a bug that jitters transitions when
-			# another animation starts.
-			animationD = queueAnimation @$(), @$('.card')
-			waitD = App.viewStates.queue.createDeferred 'wait'
-			animationD.always ->
-				deferAfter 300, ->
-					waitD.resolve()
+			#App.viewStates.queue.createDeferred 'derp'
+			#return
+			queueAnimation @$(), @$('.card')
 	).observes 'card.played'
+
+	# IE10 (RP, at least) has a bug that jitters transitions when another
+	# animation starts. Let's wait for the cards finish sliding over.
+	waitForCardsToSlideOver: (->
+		if (@getPath 'card.played') && !(@getPath 'card.inHand')
+			wait = App.viewStates.queue.createDeferred 'wait'
+			deferAfter 400, ->
+				wait.resolve()
+	).observes 'card.played', 'card.inHand'
 
 	indexName: (-> 'card' + @getPath 'card.index').property 'card.index'
 

@@ -1,5 +1,5 @@
 <div id="board">
 	{{#each view.players}}
-		{{view PlayerView playerBinding="this"}}
+		{{view PlayerView playerBinding="this" playersBinding="view.players"}}
 	{{/each}}
 </div>

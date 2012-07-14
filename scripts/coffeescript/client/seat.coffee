@@ -19,3 +19,11 @@ root.Seat =
 			when Seat.Left then Seat.Across
 			when Seat.Across then Seat.Right
 			when Seat.Right then Seat.Self
+
+	distance: (seatFrom, seatTo) ->
+		distance = 0
+		while seatFrom != seatTo
+			seatFrom = Seat.nextSeat seatFrom
+			distance++
+
+		return distance

@@ -10,13 +10,6 @@ $selfCardSpacing: 30%; // Of card widths
 	@include trans-x-rotate-trans-y($horiz, 0.8px * (($i - $half) * ($i - $half) - $half * $half) + $vertical, ($i - $half) * 2deg);
 }
 
-$across-z-index: 10;
-$left-z-index: 30;
-$right-z-index: 50;
-$self-z-index: 70;
-
-$passing-z-index: 80;
-
 @include keyframes(self-played) {
 	to {
 		@include simple-transform(1, 15deg, 50%, -120%);
@@ -64,17 +57,34 @@ $passing-z-index: 80;
 			@include full-screen();
 		}
 
-		.hand.played .card.inHand {
-			// Wait until the card play has finished before moving the rest of
-			// the cards.
-			@include transition-delay($cardPlayDuration);
-		}
-
 		.card.inHand {
 			@include single-transition(transform, 0.2s, ease-out);
 		}
 
+		.hand {
+			z-index: 1;
+
+			&.firstToGo {
+				z-index: 1;
+			}
+			&.secondToGo {
+				z-index: 2;
+			}
+			&.thirdToGo {
+				z-index: 3;
+			}
+			&.fourthToGo {
+				z-index: 4;
+			}
+		}
+
 		&.self {
+
+			.hand.waitingToPlay {
+				// Always override the hand z-index if we haven't played yet
+				z-index: 5;
+			}
+
 			$left: 40%;
 			$right: 80%;
 			$rotation: 10deg;
@@ -101,7 +111,7 @@ $passing-z-index: 80;
 						.card#{$i} .card {
 							$maxTotal: $total - 1;
 
-							z-index: $i + 1 + $self-z-index;
+							z-index: $i + 1;
 
 							@include selfCardTransform($i, $maxTotal);
 
@@ -225,7 +235,8 @@ $passing-z-index: 80;
 }
 
 #passing {
-	z-index: $passing-z-index;
+	position: relative;
+	z-index: 6;
 	width: 300px;
 	height: 300px;
 }

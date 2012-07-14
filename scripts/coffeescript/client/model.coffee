@@ -49,9 +49,8 @@ model.UserCard = UserCard = Card.extend
 	selected: false
 	index: null
 	played: false
+	inHand: true
 	finishing: false
-
-	inHand: (-> !@played).property 'played'
 
 	selectable: (-> (@get 'known') && !@played && !@selected).property 'known', 'played', 'selected'
 
@@ -92,9 +91,13 @@ model.Hand = Hand = Em.ArrayProxy.extend
 		item.set 'played', true
 		item.set 'selected', false
 
+	finishPlayingCard: ->
+		cardPlayed = @findProperty 'played', true
+		cardPlayed.set 'inHand', false
+
 		# Move indices up
 		@filter (card, i, self) ->
-			if card.index > item.index
+			if card.index > cardPlayed.index
 				card.decrementProperty 'index'
 
 	played: (-> @someProperty 'played', true).property '@each.played'
@@ -115,7 +118,7 @@ model.Hand = Hand = Em.ArrayProxy.extend
 			if card.index isnt i
 				card.set 'index', i
 
-	cardsInHand: (-> (@filterProperty 'played', false).get 'length').property '@each.played'
+	cardsInHand: (-> (@filterProperty 'inHand', true).get 'length').property '@each.inHand'
 
 	trickFinishing: ->
 		card = @findProperty 'played', true
@@ -169,6 +172,7 @@ model.Player = Player = Em.Object.extend
 	passed: false
 	played: false
 	hisTurn: false
+	firstToGo: false
 	hand: null
 	roundPoints: 0
 	gamePoints: 0
@@ -194,3 +198,8 @@ model.Players = Players = Em.ArrayProxy.extend
 			@set 'content', []
 
 	user: (-> @findProperty 'seat', Seat.Self).property '@each.seat'
+
+	nthToGo: (player) ->
+		first = @findProperty 'firstToGo', true
+		if first
+			return Seat.distance first.seat, player.seat

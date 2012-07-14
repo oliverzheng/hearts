@@ -96,6 +96,7 @@ root.GameController = Em.Object.extend
 		@gameQueue.queueEnd 'startTrick', =>
 			App.viewStates.goToState 'newTrick'
 			App.viewStates.goToState 'trick'
+			player.set 'firstToGo', true
 			App.viewStates.send 'startWith', player
 
 	playersTurn: (gamePlayer) ->
@@ -107,13 +108,11 @@ root.GameController = Em.Object.extend
 
 	cardPlayed: (gamePlayer, card) ->
 		player = (@get 'players').findProperty 'id', gamePlayer.id
-		@gameQueue.queueEnd ('cardPlayed' + card.repr()), =>
+		@gameQueue.queueEnd ('cardPlayed ' + card.repr()), =>
 			player.hand.playedCard card
 
-			#trick = (@get 'board').trick
-			#trick.pushObject model.TrickCard.create
-				#card: card
-				#seat: player.seat
+		@gameQueue.queueEnd ('finishPlayingCard' + card.repr()), =>
+			player.hand.finishPlayingCard()
 
 	trickEnded: (taker, points) ->
 		@gameQueue.queueEnd 'trickEnding', =>
@@ -129,6 +128,7 @@ root.GameController = Em.Object.extend
 		@gameQueue.queueEnd 'trickEnded', =>
 			(@get 'players').forEach (player) ->
 				player.hand.trickFinished()
+				player.set 'firstToGo', false
 
 	roundEnded: ->
 		@gameQueue.queueEnd 'roundEnded', =>

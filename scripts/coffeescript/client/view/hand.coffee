@@ -31,3 +31,18 @@ root.HandView = Em.View.extend
 			else
 				return 'card1'
 	).property 'hand.played'
+
+	waitingToPlay: (->
+		!@getPath 'hand.played'
+	).property 'hand.played'
+
+	nthToGo: (->
+		players = @get 'players'
+		nth = players.nthToGo @get 'player'
+		if nth?
+			switch nth
+				when 0 then 'firstToGo'
+				when 1 then 'secondToGo'
+				when 2 then 'thirdToGo'
+				when 3 then 'fourthToGo'
+	).property 'players.@each.firstToGo'
