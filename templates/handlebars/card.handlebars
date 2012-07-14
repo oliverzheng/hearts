@@ -1,37 +1,41 @@
-<div {{bindAttr class=":card indexName view.card.unknown:unknown card.suit.name numberName selectable selected view.seatName view.card.played:played view.card.inHand:inHand"}}>
-	<div class="labels">
-		<div class="top label">
-			<div class="number">{{view.card.numberSymbol}}</div>
-			<div class="symbol"></div>
-		</div>
-		<div class="bottom label">
-			<div class="number">{{view.card.numberSymbol}}</div>
-			<div class="symbol"></div>
-		</div>
-	</div>
-	<div class="symbols">
-		<div class="left">
-			<div class="symbol top edge"></div>
-			<div class="symbol top third"></div>
-			<div class="symbol middle"></div>
-			<div class="symbol bottom third"></div>
-			<div class="symbol bottom edge"></div>
-		</div>
-		<div class="center">
-			<div class="symbol top edge"></div>
-			<div class="symbol top sixth"></div>
-			<div class="symbol top quarter"></div>
-			<div class="symbol middle"></div>
-			<div class="symbol bottom quarter"></div>
-			<div class="symbol bottom sixth"></div>
-			<div class="symbol bottom edge"></div>
-		</div>
-		<div class="right">
-			<div class="symbol top edge"></div>
-			<div class="symbol top third"></div>
-			<div class="symbol middle"></div>
-			<div class="symbol bottom third"></div>
-			<div class="symbol bottom edge"></div>
+<div {{bindAttr class="view.prevCardClass :outer"}}>
+	<div {{bindAttr class="view.cardClass :outer"}}>
+		<div {{bindAttr class=":card view.card.unknown:unknown card.suit.name numberName selectable selected view.seatName view.card.played:played view.card.inHand:inHand"}}>
+			<div class="labels">
+				<div class="top label">
+					<div class="number">{{view.card.numberSymbol}}</div>
+					<div class="symbol"></div>
+				</div>
+				<div class="bottom label">
+					<div class="number">{{view.card.numberSymbol}}</div>
+					<div class="symbol"></div>
+				</div>
+			</div>
+			<div class="symbols">
+				<div class="left">
+					<div class="symbol top edge"></div>
+					<div class="symbol top third"></div>
+					<div class="symbol middle"></div>
+					<div class="symbol bottom third"></div>
+					<div class="symbol bottom edge"></div>
+				</div>
+				<div class="center">
+					<div class="symbol top edge"></div>
+					<div class="symbol top sixth"></div>
+					<div class="symbol top quarter"></div>
+					<div class="symbol middle"></div>
+					<div class="symbol bottom quarter"></div>
+					<div class="symbol bottom sixth"></div>
+					<div class="symbol bottom edge"></div>
+				</div>
+				<div class="right">
+					<div class="symbol top edge"></div>
+					<div class="symbol top third"></div>
+					<div class="symbol middle"></div>
+					<div class="symbol bottom third"></div>
+					<div class="symbol bottom edge"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

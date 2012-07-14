@@ -108,7 +108,7 @@ root.GameController = Em.Object.extend
 	cardPlayed: (gamePlayer, card) ->
 		player = (@get 'players').findProperty 'id', gamePlayer.id
 		@gameQueue.queueEnd ('cardPlayed' + card.repr()), =>
-			player.hand.played card
+			player.hand.playedCard card
 
 			#trick = (@get 'board').trick
 			#trick.pushObject model.TrickCard.create

@@ -1,5 +1,10 @@
 @import 'compass';
 
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
 $cardWidthToHeight: 63/88;
 
 @mixin full-screen() {
@@ -8,10 +13,9 @@ $cardWidthToHeight: 63/88;
 	position: absolute;
 }
 
-.ember-view {
+div.ember-view {
 	@include full-screen();
 }
-
 
 @mixin calc($property, $expression) {
 	#{$property}: -moz-calc(#{$expression});
@@ -20,9 +24,29 @@ $cardWidthToHeight: 63/88;
 	#{$property}: calc(#{$expression});
 }
 
+@function percent-pos($position, $start: 0%, $end: 100%) {
+	@return ($end - $start) * ($position / 100%) + $start;
+}
+
 @mixin percentPos($property, $position, $size, $start: 0%, $end: 100%) {
 	$adjustedPosition: ($end - $start) * ($position / 100%) + $start;
 	@include calc($property, '#{$adjustedPosition} - #{$size * ($position / 100%)}');
+}
+
+@mixin trans-x-rotate-trans-y($x, $y, $rotation) {
+	-webkit-transform: translateX($x) rotate($rotation) translateY($y);
+	-moz-transform: translateX($x) rotate($rotation) translateY($y);
+	-ms-transform: translateX($x) rotate($rotation) translateY($y);
+	-o-transform: translateX($x) rotate($rotation) translateY($y);
+	transform: translateX($x) rotate($rotation) translateY($y);
+}
+
+@mixin trans-y-rotate-trans-y($y1, $y2, $rotation) {
+	-webkit-transform: translateY($y1) rotate($rotation) translateY($y2);
+	-moz-transform: translateY($y1) rotate($rotation) translateY($y2);
+	-ms-transform: translateY($y1) rotate($rotation) translateY($y2);
+	-o-transform: translateY($y1) rotate($rotation) translateY($y2);
+	transform: translateY($y1) rotate($rotation) translateY($y2);
 }
 
 @mixin relativeBase($position) {

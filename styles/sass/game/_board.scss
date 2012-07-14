@@ -1,69 +1,116 @@
+$totalCards: 13;
+$cardSpacingX: 10%;
+$cardSpacingY: $cardSpacingX * $cardWidthToHeight;
+$selfCardSpacing: 30%; // Of card widths
+
 @mixin selfCardTransform($i, $total, $vertical: 0px) {
+	$horiz: ($i + ($totalCards - 1 - $total) / 2)* $selfCardSpacing;
 	$half: $total/2;
-	@include simple-transform(1, ($i - $half) * 2deg, 0, 0.8px * (($i - $half) * ($i - $half) - $half * $half) + $vertical);
+
+	@include trans-x-rotate-trans-y($horiz, 0.8px * (($i - $half) * ($i - $half) - $half * $half) + $vertical, ($i - $half) * 2deg);
 }
 
-$totalCards: 13;
+$across-z-index: 10;
+$left-z-index: 30;
+$right-z-index: 50;
+$self-z-index: 70;
+
+$passing-z-index: 80;
+
+@include keyframes(self-played) {
+	to {
+		@include simple-transform(1, 15deg, 50%, -120%);
+	}
+}
+@include keyframes(left-played) {
+	to {
+		@include simple-transform(1, -85deg, 0, 200%);
+	}
+}
+@include keyframes(across-played) {
+	to {
+		@include simple-transform(1, 15deg, 50%, 120%);
+	}
+}
+@include keyframes(right-played) {
+	to {
+		@include simple-transform(1, 85deg, 100%, 200%);
+	}
+}
 
 #board {
-	$cardHeight: 18vh;
+	$cardPlayDuration: 1.5s;
+
+	$cardHeight: 180px;
 	$cardWidth: $cardHeight * $cardWidthToHeight;
 
 	@include full-screen();
 
-	.card {
-		height: $cardHeight;
-		width: $cardWidth;
-	}
-
 	.player {
 		@include full-screen();
 
-		.hand {
+		.card {
+			height: $cardHeight;
+			width: $cardWidth;
+
+			&.played {
+				@include animation-fill-mode(forwards);
+				@include animation-duration($cardPlayDuration);
+				@include animation-timing-function(ease-out);
+			}
+		}
+
+		.hand, .outer {
 			@include full-screen();
+		}
+
+		.hand.played .card.inHand {
+			// Wait until the card play has finished before moving the rest of
+			// the cards.
+			@include transition-delay($cardPlayDuration);
+		}
+
+		.card.inHand {
+			@include single-transition(transform, 0.2s, ease-out);
 		}
 
 		&.self {
 			$left: 40%;
-			$right: 90%;
+			$right: 80%;
 			$rotation: 10deg;
 
+			position: relative;
+
 			.card {
+				left: $left;
 				bottom: 5%;
 
 				&.played {
-					left: 45%;
-					bottom: 35%;
-					@include rotate(15deg);
-				}
-
-				&.inHand {
-					@include single-transition(all, 0.1s, ease-out);
+					@include animation-name(self-played);
 				}
 			}
 
-			@for $total from 1 through $totalCards {
+			// This loop has to be in decreasing order. When a lower .hand{#} is
+			// applied, it has to override the higher one.
+			//@for $totalIncrease from 0 to $totalCards {
+			@for $totalIncrease from 0 to $totalCards {
+				$total: $totalCards - $totalIncrease;
 				.hand#{$total} {
-					$range: ($right - $left) * (($totalCards - $total) / $totalCards);
-					$totalLeft: $left + $range / 2;
-					$totalRight: $right - $range / 2;
-
-					@for $i from 0 to $total {
-						.card#{$i} {
+					@for $iIncrease from 1 through $total {
+						$i: $total - $iIncrease;
+						.card#{$i} .card {
 							$maxTotal: $total - 1;
 
-							z-index: $i + 1;
+							z-index: $i + 1 + $self-z-index;
 
-							&.inHand {
-								@include percentPos(left, $i/$maxTotal * 100%, $cardWidth, $totalLeft, $totalRight);
-								@include selfCardTransform($i, $maxTotal);
-							}
+							@include selfCardTransform($i, $maxTotal);
 
 							&.selectable:hover {
 								@include selfCardTransform($i, $maxTotal, -10px);
 							}
 
-							&.selected {
+							&.selected, &.played {
+								// Played starts from here too
 								@include selfCardTransform($i, $maxTotal, -20px);
 							}
 						}
@@ -76,22 +123,32 @@ $totalCards: 13;
 			$left: 40%;
 			$right: 70%;
 
+			position: relative;
+
 			.card {
-				top: 1%;
+				top: 3%;
+				left: $left;
 
 				&.played {
-					left: 47%;
-					top: 27%;
-					@include rotate(185deg);
+					@include animation-name(across-played);
 				}
 			}
 
-			@for $i from 0 to 13 {
-				.card#{$i} {
-					@include percentPos(left, $i/12 * 100%, $cardWidth, $left, $right);
-					$half: 12/2;
-					@include simple-transform(1, ($half - $i) * 4deg, 0, 0.7px * ($half * $half - ($i - $half) * ($i - $half)));
-					z-index: 13 - $i;
+			@for $totalIncrease from 0 to $totalCards {
+				$total: $totalCards - $totalIncrease;
+				.hand#{$total} {
+					@for $iIncrease from 1 through $total {
+						$i: $total - $iIncrease;
+						.card#{$i} .card {
+							$maxTotal: $total - 1;
+
+							z-index: $maxTotal - $i;
+
+							$horiz: ($i + ($totalCards - 1 - $maxTotal) / 2)* $cardSpacingX;
+							$half: $maxTotal/2;
+							@include trans-x-rotate-trans-y($horiz, 0.6px * ($half * $half - ($i - $half) * ($i - $half)), ($half - $i) * 4deg);
+						}
+					}
 				}
 			}
 		}
@@ -100,22 +157,32 @@ $totalCards: 13;
 			$top: 30%;
 			$bottom: 80%;
 
+			position: relative;
+
 			.card {
-				left: 3%;
+				top: $top;
+				left: 5%;
 
 				&.played {
-					left: 37%;
-					top: 40%;
-					@include rotate(85deg);
+					@include animation-name(left-played);
 				}
 			}
 
-			@for $i from 0 to 13 {
-				.card#{$i} {
-					@include percentPos(top, $i/12 * 100%, $cardHeight, $top, $bottom);
-					$half: 12/2;
-					@include simple-transform(1, 90deg - ($half - $i) * 4deg, 0, -0.8px * ($half * $half - ($i - $half) * ($i - $half)));
-					z-index: $i + 1;
+			@for $totalIncrease from 0 to $totalCards {
+				$total: $totalCards - $totalIncrease;
+				.hand#{$total} {
+					@for $iIncrease from 1 through $total {
+						$i: $total - $iIncrease;
+						.card#{$i} .card {
+							$maxTotal: $total - 1;
+
+							z-index: $i;
+
+							$vert: ($i + ($totalCards - 1 - $maxTotal) / 2) * $cardSpacingY;
+							$half: $maxTotal/2;
+							@include trans-y-rotate-trans-y($vert, 0.8px * ($half * $half - ($i - $half) * ($i - $half)), -90deg - ($half - $i) * 4deg);
+						}
+					}
 				}
 			}
 		}
@@ -125,22 +192,32 @@ $totalCards: 13;
 			$bottom: 60%;
 			$rotation: 10deg;
 
+			position: relative;
+
 			.card {
-				right: 3%;
+				top: $top;
+				right: 5%;
 
 				&.played {
-					right: 37%;
-					top: 40%;
-					@include rotate(85deg);
+					@include animation-name(right-played);
 				}
 			}
 
-			@for $i from 0 to 13 {
-				.card#{$i} {
-					@include percentPos(top, $i/12 * 100%, $cardHeight, $top, $bottom);
-					$half: 12/2;
-					@include simple-transform(1, 90deg + ($half - $i) * 4deg, 0, 0.8px * ($half * $half - ($i - $half) * ($i - $half)));
-					z-index: 13 - $i;
+			@for $totalIncrease from 0 to $totalCards {
+				$total: $totalCards - $totalIncrease;
+				.hand#{$total} {
+					@for $iIncrease from 1 through $total {
+						$i: $total - $iIncrease;
+						.card#{$i} .card {
+							$maxTotal: $total - 1;
+
+							z-index: $maxTotal - $i;
+
+							$vert: ($i + ($totalCards - 1 - $maxTotal) / 2) * $cardSpacingY;
+							$half: $maxTotal/2;
+							@include trans-y-rotate-trans-y($vert, 0.8px * ($half * $half - ($i - $half) * ($i - $half)), 90deg + ($half - $i) * 4deg);
+						}
+					}
 				}
 			}
 		}
@@ -148,7 +225,7 @@ $totalCards: 13;
 }
 
 #passing {
-	z-index: 5;
+	z-index: $passing-z-index;
 	width: 300px;
 	height: 300px;
 }

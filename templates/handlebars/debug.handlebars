@@ -1,0 +1,53 @@
+<div id="debug" {{bindAttr class="view.collapseClass view.tab"}}>
+	<div {{action "toggleCollapse"}} class="collapse">[{{view.collapseSymbol}}]</div>
+
+	<ul class="tabs">
+		<li class="logging" {{action "showLogging"}}>Logging</li>
+		<li class="css" {{action "showCss"}}>CSS</li>
+	</ul>
+
+	<ul class="content logging">
+		{{#each App.logs}}
+		<li {{bindAttr class="severity"}}>
+			<div class="update">{{status}}</div>
+			<div class="time">{{time}}</div>
+			<div class="message">{{msg}}</div>
+			<div class="extras">
+				{{#each extras}}
+					<p>{{this}}</p>
+				{{/each}}
+			</div>
+		</li>
+		{{/each}}
+	</ul>
+
+	<div class="content css">
+		<p>
+			{{view AddCssWatchView placeholder="Enter selector to watch"}}
+			<table>
+				<thead>
+					<tr>
+						<th>CSS</th>
+						{{#each view.watchTimes}}
+							<th></th>
+						{{/each}}
+					</tr>
+				</thead>
+				{{#each App.cssWatch.els}}
+					<tbody>
+						<tr><td>{{level}}</td></tr>
+						{{#each classes}}
+							<tr>
+								<th>{{className}}</th>
+								{{#each appliedList}}
+									<td {{bindAttr class="applied:applied changed:changed"}}></td>
+								{{/each}}
+							</tr>
+						{{/each}}
+						<tr class="separator"></tr>
+					</tbody>
+				{{/each}}
+			</table>
+		</p>
+	</div>
+</div>

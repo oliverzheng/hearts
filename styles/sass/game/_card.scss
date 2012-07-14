@@ -46,7 +46,11 @@
 		left: $sideMargin;
 		right: $sideMargin;
 
-		& > * { height: 100%; }
+		& > * {
+			position: absolute;
+			height: 100%;
+			width: 100%;
+		}
 
 		.left .symbol { left: 0; }
 		.right .symbol { right: 0; }
@@ -82,7 +86,7 @@
 		$symbolWidth: 13%;
 		$symbolHeight: $symbolWidth * $cardWidthToHeight;
 		$lineHeight: 1.3em;
-		font-size: 3vh;
+		font-size: 30px;
 		line-height: $lineHeight;
 		@include full-screen();
 

@@ -1,7 +1,8 @@
 @import 'compass';
-@import 'compass/reset';
+@import 'lib/animations';
 
 @import 'base';
+@import 'debug';
 
 @import 'game/background';
 @import 'game/card';

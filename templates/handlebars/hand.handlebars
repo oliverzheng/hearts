@@ -1,12 +1,13 @@
-<div {{bindAttr class=":hand view.cardsInHandName"}}>
-	{{#if view.player.isSelf}}
-		<img class="aspectRatio" src="assets/images/handself.svg" />
-	{{/if}}
-	{{#if view.player.isAcross}}
-		<img class="aspectRatio" src="assets/images/handacross.svg" />
-	{{/if}}
-
-	{{#each hand}}
-		{{view CardView cardBinding="this"}}
-	{{/each}}
+<!--
+We need to put prevHandClass in an outer div because for a brief moment,
+it's the same as handClass, which removes it as soon as it's added.
+-->
+<div {{bindAttr class="view.prevHandClass :outer"}}>
+	<div {{bindAttr class="view.handClass :outer"}}>
+		<div {{bindAttr class=":hand view.hand.played:played"}}>
+			{{#each view.hand}}
+				{{view CardView cardBinding="this" handBinding="view.hand"}}
+			{{/each}}
+		</div>
+	</div>
 </div>

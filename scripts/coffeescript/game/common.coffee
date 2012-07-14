@@ -1,5 +1,6 @@
 root = exports ? this
 
+root.deferAfter = deferAfter = (time, func) -> setTimeout func, time
 root.defer = defer = (func) -> setTimeout func, 0
 
 root.copy = copy = (obj) -> $.extend true, {}, obj
@@ -19,22 +20,25 @@ root.DeferredQueue = class DeferredQueue
 		if @isEmpty() && !@appendEndFunc()
 			return
 
-		[name, func] = @funcs.shift()
+		[name, func, logItem] = @funcs.shift()
 		@running = true
 
 		defer =>
-			#console.log @name, 'executing', name
 			deferred = func()
 
 			if deferred?.always?
-				#console.log @name, 'deferred'
+				logItem.updateStatus 'deferred'
+
 				deferred.always =>
-					#console.log @name, 'deferred', name, 'finished', @funcs.length
+					logItem.updateStatus 'done'
+					logItem.updateSeverity info
 					@running = false
 					@ensureRunning()
 			else
+				logItem.updateStatus 'done'
+				logItem.updateSeverity info
+
 				@running = false
-				#console.log @name, 'no deferred, next'
 				# This has to be deferred. func() could have deferred functions
 				# that queue up functions. We want to execute those first.
 				defer => @ensureRunning()
@@ -44,15 +48,13 @@ root.DeferredQueue = class DeferredQueue
 			return false
 		else
 			@funcs.push @endFuncs.shift()
-			#console.log 'appending to'
-			@dump()
-			#console.log 'from'
-			@dumpEnd()
 			return true
 
 	queue: (name, func) ->
-		@funcs.push [name, func]
-		@dump()
+		logItem = log name
+		logItem.updateStatus 'pending'
+		logItem.updateExtras getCallstack()
+		@funcs.push [name, func, logItem]
 		@ensureRunning()
 		return @
 
@@ -66,17 +68,13 @@ root.DeferredQueue = class DeferredQueue
 		return deferred
 
 	queueEnd: (name, func) ->
-		@endFuncs.push [name, func]
-		@dumpEnd()
+		logItem = log name
+		logItem.updateStatus 'pending end'
+		logItem.updateExtras getCallstack()
+		@endFuncs.push [name, func, logItem]
 		@ensureRunning()
 		return @
 
 	queueDeferredEnd: (name, deferred) ->
 		@queueEnd name, -> deferred
 		return @
-
-	dump: ->
-		#console.log.apply #console, [name for [name, f] in @funcs]
-
-	dumpEnd: ->
-		#console.log.apply #console, [name for [name, f] in @endFuncs]
