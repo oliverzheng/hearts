@@ -12,8 +12,6 @@ root.CardView = Em.View.extend
 
 	queuePlayAnimation: (->
 		if @getPath 'card.played'
-			#App.viewStates.queue.createDeferred 'derp'
-			#return
 			queueAnimation @$(), @$('.card')
 	).observes 'card.played'
 

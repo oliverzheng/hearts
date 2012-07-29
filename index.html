@@ -6,22 +6,24 @@
 
 		<title>Hearts</title>
 
-		<link rel="stylesheet" type="text/css" href="styles/css/screen.css" media="screen, projection" />
-		<link rel="stylesheet" type="text/css" href="styles/css/print.css" media="print" />
-		<!--[if IE]>
-			<link rel="stylesheet" type="text/css" href="styles/css/ie.css" media="print" />
-		<![endif]-->
-
+		<link rel="stylesheet" type="text/css" id="css" href="styles/css/ie.css" media="screen, projection" />
 		<script type="text/javascript">
 			var ENV = {
 				CP_DEFAULT_CACHEABLE: true,
-				VIEW_PRESERVES_CONTEXT: true
+				VIEW_PRESERVES_CONTEXT: true,
+				DEBUG: true
 			};
 		</script>
 		<script src="lib/jquery-1.7.2.min.js"></script>
 		<script src="lib/ember-0.9.8.1.min.js"></script>
 
 		<script src="templates/template.js"></script>
+
+		<script type="text/javascript">
+			if (!$.browser.msie)
+				$('#css').attr('href', 'styles/css/nonie.css');
+		</script>
+
 	</head>
 	<body>
 		<script src="scripts/js/game/pass.js"></script>

@@ -1,41 +1,47 @@
 $totalCards: 13;
 $cardSpacingX: 10%;
 $cardSpacingY: $cardSpacingX * $cardWidthToHeight;
-$selfCardSpacing: 30%; // Of card widths
+$selfCardSpacing: 33%; // Of card widths
 
-@mixin selfCardTransform($i, $total, $vertical: 0px) {
+$cardHeight: 0.2 * $screenHeight;
+$cardWidth: $cardHeight * $cardWidthToHeight;
+
+
+@mixin selfCardTransform($i, $total, $y: 0px) {
+	$left: 0.4;
+	$top: 0.74;
+
 	$horiz: ($i + ($totalCards - 1 - $total) / 2)* $selfCardSpacing;
 	$half: $total/2;
 
-	@include trans-x-rotate-trans-y($horiz, 0.8px * (($i - $half) * ($i - $half) - $half * $half) + $vertical, ($i - $half) * 2deg);
+	$vertical: 0.8px * (($i - $half) * ($i - $half) - $half * $half) + $y;
+
+	@include transform(translate($left * $screenWidth, $top * $screenHeight) translateX($horiz) rotate(($i - $half) * 2deg) translateY($vertical));
 }
 
 @include keyframes(self-played) {
 	to {
-		@include simple-transform(1, 15deg, 50%, -120%);
+		@include transform(translate($screenWidth * 0.44, $screenHeight * 0.49) rotate(15deg));
 	}
 }
 @include keyframes(left-played) {
 	to {
-		@include simple-transform(1, -85deg, 0, 200%);
+		@include transform(translate($screenWidth * 0.35, $screenHeight * 0.4) rotate(-85deg));
 	}
 }
 @include keyframes(across-played) {
 	to {
-		@include simple-transform(1, 15deg, 50%, 120%);
+		@include transform(translate($screenWidth * 0.45, $screenHeight * 0.28) rotate(15deg));
 	}
 }
 @include keyframes(right-played) {
 	to {
-		@include simple-transform(1, 85deg, 100%, 200%);
+		@include transform(translate($screenWidth * 0.55, $screenHeight * 0.4) rotate(85deg));
 	}
 }
 
 #board {
-	$cardPlayDuration: 1.5s;
-
-	$cardHeight: 180px;
-	$cardWidth: $cardHeight * $cardWidthToHeight;
+	$cardPlayDuration: 0.7s;
 
 	@include full-screen();
 
@@ -79,22 +85,14 @@ $selfCardSpacing: 30%; // Of card widths
 		}
 
 		&.self {
-
 			.hand.waitingToPlay {
 				// Always override the hand z-index if we haven't played yet
 				z-index: 5;
 			}
 
-			$left: 40%;
-			$right: 80%;
-			$rotation: 10deg;
-
 			position: relative;
 
 			.card {
-				left: $left;
-				bottom: 5%;
-
 				&.played {
 					@include animation-name(self-played);
 				}
@@ -130,15 +128,9 @@ $selfCardSpacing: 30%; // Of card widths
 		}
 
 		&.across {
-			$left: 40%;
-			$right: 70%;
-
 			position: relative;
 
 			.card {
-				top: 3%;
-				left: $left;
-
 				&.played {
 					@include animation-name(across-played);
 				}
@@ -156,7 +148,8 @@ $selfCardSpacing: 30%; // Of card widths
 
 							$horiz: ($i + ($totalCards - 1 - $maxTotal) / 2)* $cardSpacingX;
 							$half: $maxTotal/2;
-							@include trans-x-rotate-trans-y($horiz, 0.6px * ($half * $half - ($i - $half) * ($i - $half)), ($half - $i) * 4deg);
+							$vert: 0.6px * ($half * $half - ($i - $half) * ($i - $half));
+							@include transform(translate(0.4 * $screenWidth, 0.03 * $screenHeight) translateX($horiz) rotate(($half - $i) * 4deg) translateY($vert));
 						}
 					}
 				}
@@ -164,15 +157,9 @@ $selfCardSpacing: 30%; // Of card widths
 		}
 
 		&.left {
-			$top: 30%;
-			$bottom: 80%;
-
 			position: relative;
 
 			.card {
-				top: $top;
-				left: 5%;
-
 				&.played {
 					@include animation-name(left-played);
 				}
@@ -190,7 +177,8 @@ $selfCardSpacing: 30%; // Of card widths
 
 							$vert: ($i + ($totalCards - 1 - $maxTotal) / 2) * $cardSpacingY;
 							$half: $maxTotal/2;
-							@include trans-y-rotate-trans-y($vert, 0.8px * ($half * $half - ($i - $half) * ($i - $half)), -90deg - ($half - $i) * 4deg);
+
+							@include transform(translate(0.04 * $screenWidth, 0.3 * $screenHeight) translateY($vert) rotate(-90deg - ($half - $i) * 4deg) translateY(0.8px * ($half * $half - ($i - $half) * ($i - $half))));
 						}
 					}
 				}
@@ -198,15 +186,9 @@ $selfCardSpacing: 30%; // Of card widths
 		}
 
 		&.right {
-			$top: 10%;
-			$bottom: 60%;
-			$rotation: 10deg;
-
 			position: relative;
 
 			.card {
-				top: $top;
-				right: 5%;
 
 				&.played {
 					@include animation-name(right-played);
@@ -225,7 +207,8 @@ $selfCardSpacing: 30%; // Of card widths
 
 							$vert: ($i + ($totalCards - 1 - $maxTotal) / 2) * $cardSpacingY;
 							$half: $maxTotal/2;
-							@include trans-y-rotate-trans-y($vert, 0.8px * ($half * $half - ($i - $half) * ($i - $half)), 90deg + ($half - $i) * 4deg);
+
+							@include transform(translate(0.8 * $screenWidth, 0.1 * $screenHeight) translateY($vert) rotate(90deg + ($half - $i) * 4deg) translateY(0.8px * ($half * $half - ($i - $half) * ($i - $half))));
 						}
 					}
 				}

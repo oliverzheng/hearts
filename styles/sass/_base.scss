@@ -1,8 +1,9 @@
-@import 'compass';
-
 html, body {
 	margin: 0;
 	padding: 0;
+	width: $screenWidth;
+	height: $screenHeight;
+	position: relative;
 }
 
 $cardWidthToHeight: 63/88;
