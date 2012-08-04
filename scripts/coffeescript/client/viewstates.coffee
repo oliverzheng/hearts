@@ -14,7 +14,7 @@ root.App.ViewStates = Em.StateManager.extend
 		output: null
 		players: null
 
-		user: (-> @.players.get 'user').property 'players.user'
+		user: (-> @players.get 'user').property 'players.user'
 
 		view: GameView
 

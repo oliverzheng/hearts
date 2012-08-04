@@ -15,9 +15,17 @@ root.GameController = Em.Object.extend
 	passCards: (->
 		user = @get 'user'
 		if user.passed
-			cards = (c.card for c in user.hand.filterProperty 'selected', true)
-			@game.remotePlayerPassed user.id, cards
-			@connection?.passCards cards
+			cards = user.hand.filterProperty 'selected', true
+			@gameQueue.queueEnd 'passing cards', ->
+				for card in cards
+					card.set 'passing', true
+
+			@gameQueue.queueEnd 'finished passing', ->
+				user.hand.finishedPassing()
+
+			rawCards = (c.card for c in cards)
+			@game.remotePlayerPassed user.id, rawCards
+			@connection?.passCards rawCards
 	).observes 'user.passed'
 
 	playCard: (->
@@ -85,9 +93,12 @@ root.GameController = Em.Object.extend
 
 	receivedCards: (player) ->
 		if player.id is (@get 'user').id
+			p = (@get 'players').findProperty 'id', player.id
 			@gameQueue.queueEnd 'received', =>
 				cards = (model.UserCard.create {card: card} for card in player.receivedCards)
-				((@get 'players').findProperty 'id', player.id).hand.receive cards
+				p.hand.receive cards
+			@gameQueue.queueEnd 'finished receiving', =>
+				p.hand.finishedReceiving()
 
 	startRound: (startingPlayer) ->
 

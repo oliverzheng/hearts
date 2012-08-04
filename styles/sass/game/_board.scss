@@ -19,6 +19,19 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 	@include transform(translate($left * $screenWidth, $top * $screenHeight) translateX($horiz) rotate(($i - $half) * 2deg) translateY($vertical));
 }
 
+@include keyframes(self-passing) {
+	to {
+		@include transform(translate($screenWidth * 0.1, $screenHeight * 0.5) rotate(90deg));
+		opacity: 0;
+	}
+}
+@include keyframes(self-passed) {
+	from {
+		@include transform(translate($screenWidth * 0.8, $screenHeight * 0.6) rotate(-45deg));
+		opacity: 0;
+	}
+}
+
 @include keyframes(self-played) {
 	to {
 		@include transform(translate($screenWidth * 0.44, $screenHeight * 0.49) rotate(15deg));
@@ -96,6 +109,19 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 				&.played {
 					@include animation-name(self-played);
 				}
+
+				$cardPassDuration: 0.5s;
+				$cardPassDelay: 0.7s;
+
+				&.passing {
+					@include animation(self-passing $cardPassDuration ease-out $cardPassDelay);
+					@include animation-fill-mode(forwards);
+				}
+
+				&.passed {
+					@include animation(self-passed $cardPassDuration ease-out);
+					opacity: 1;
+				}
 			}
 
 			// This loop has to be in decreasing order. When a lower .hand{#} is
@@ -120,6 +146,10 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 							&.selected, &.played {
 								// Played starts from here too
 								@include selfCardTransform($i, $maxTotal, -20px);
+							}
+
+							&.passing, &.passed {
+								@include selfCardTransform($i, $maxTotal, -70px);
 							}
 						}
 					}

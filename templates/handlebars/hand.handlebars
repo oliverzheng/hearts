@@ -6,7 +6,7 @@ it's the same as handClass, which removes it as soon as it's added.
 	<div {{bindAttr class="view.handClass :outer"}}>
 		<div {{bindAttr class=":hand view.hand.played:played view.waitingToPlay:waitingToPlay view.nthToGo"}}>
 			{{#each view.hand}}
-				{{view CardView cardBinding="this" handBinding="view.hand"}}
+				{{view CardView cardBinding="this" handBinding="view.hand" playerBinding="view.player"}}
 			{{/each}}
 		</div>
 	</div>

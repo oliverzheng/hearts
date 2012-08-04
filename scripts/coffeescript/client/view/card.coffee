@@ -3,8 +3,6 @@ root = exports ? this
 root.CardView = Em.View.extend
 	templateName: 'card'
 
-	didInsertElement: ->
-
 	selectCard: ->
 		App.viewStates.send 'selectCard', @.card
 
@@ -15,14 +13,58 @@ root.CardView = Em.View.extend
 			queueAnimation @$(), @$('.card')
 	).observes 'card.played'
 
+	queuePassingAnimation: (->
+		if (@getPath 'player.isSelf') && (@getPath 'card.passing')
+			queueAnimation @$(), @$('.card.passing')
+	).observes 'card.passing'
+
+	hasPassedAnimation: false
+
+	hide: ( ->
+		return (@getPath 'card.passed') && !@hasPassedAnimation
+	).property 'hasPassedAnimation', 'card.passed'
+
+	# Passed is applied before we are in the DOM.
+	didInsertElement: ->
+		if (@getPath 'player.isSelf') && (@getPath 'card.passed')
+			animationD = queueAnimation @$(), @$('.card')
+			waitD = App.viewStates.queue.createDeferred 'waitForPassed'
+			defer =>
+				@set 'hasPassedAnimation', true
+
+				# We want the effect of passed cards "pausing" after the swing
+				# animation, but before they go into the hand. CSS animation has
+				# a delay before the animation, but does not have a "linger" for
+				# after the animation.
+				# Here, we wait manually. See board.scss for the cardPassDelay.
+
+				# We have to pass in a string selector, since it's possible our
+				# "passed" class hasn't been assigned yet
+				animationD.always ->
+					deferAfter 600, ->
+						waitD.resolve()
+
+	resetPassed: (->
+		if !(@getPath 'card.passed')
+			@set 'hasPassedAnimation', false
+	).observes 'card.passed'
+
 	# IE10 (RP, at least) has a bug that jitters transitions when another
 	# animation starts. Let's wait for the cards finish sliding over.
 	waitForCardsToSlideOver: (->
 		if (@getPath 'card.played') && !(@getPath 'card.inHand')
-			wait = App.viewStates.queue.createDeferred 'wait'
+			wait = App.viewStates.queue.createDeferred 'wait for cards to slide'
 			deferAfter 400, ->
 				wait.resolve()
 	).observes 'card.played', 'card.inHand'
+
+	waitForPassedTransition: (->
+		if !(@getPath 'card.passed')
+			wait = App.viewStates.queue.createDeferred 'wait for cards to drop'
+			deferAfter 400, ->
+				wait.resolve()
+	).observes 'card.passed'
+
 
 	indexName: (-> 'card' + @getPath 'card.index').property 'card.index'
 

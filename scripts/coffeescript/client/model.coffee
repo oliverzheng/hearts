@@ -51,6 +51,9 @@ model.UserCard = UserCard = Card.extend
 	played: false
 	inHand: true
 	finishing: false
+	passing: false # Passing to another player
+	finishedPassing: false
+	passed: false # Passed from another player
 
 	selectable: (-> (@get 'known') && !@played && !@selected).property 'known', 'played', 'selected'
 
@@ -71,10 +74,22 @@ model.Hand = Hand = Em.ArrayProxy.extend
 		((@.filterProperty 'selected', true).get 'length') is 3
 	).property '@each.selected'
 
+	finishedPassing: ->
+		for card in @filterProperty 'passing', true
+			card.set 'finishedPassing', true
+
 	receive: (receivedCards) ->
-		@removeObjects @filterProperty 'selected', true
+		@removeObjects @filterProperty 'passing', true
+
+		for card in receivedCards
+			card.set 'passed', true
 		@pushObjects receivedCards
 		@sort()
+
+	finishedReceiving: ->
+		received = @filterProperty 'passed', true
+		for card in received
+			card.set 'passed', false
 
 	playedCard: (card) ->
 		item = null

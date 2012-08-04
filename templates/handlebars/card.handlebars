@@ -1,6 +1,6 @@
 <div {{bindAttr class="view.prevCardClass :outer"}}>
 	<div {{bindAttr class="view.cardClass :outer"}}>
-		<div {{bindAttr class=":card view.card.unknown:unknown card.suit.name numberName selectable selected view.seatName view.card.played:played view.card.inHand:inHand"}} {{action "selectCard"}}>
+		<div {{bindAttr class=":card view.card.unknown:unknown card.suit.name numberName selectable selected view.seatName view.card.played:played view.card.inHand:inHand view.card.passing:passing view.hasPassedAnimation:passed view.hide:hide"}} {{action "selectCard"}}>
 			<div class="labels">
 				<div class="top label">
 					<div class="number">{{view.card.numberSymbol}}</div>
