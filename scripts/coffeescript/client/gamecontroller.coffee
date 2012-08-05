@@ -53,6 +53,7 @@ root.GameController = Em.Object.extend
 		@gameQueue.queueDeferredEnd 'getProfile', (getHttpServer().getProfile player.id).then (profile) =>
 			(@get 'players').pushObject model.Player.create
 				id: player.id
+				gamePlayer: player
 				name: profile.name
 				pictureUrl: profile.pictureUrl
 				seat: @seat
@@ -124,8 +125,13 @@ root.GameController = Em.Object.extend
 				currentPlayer = (@get 'players').findProperty 'id', gamePlayer.id
 				App.viewStates.send 'setPlayer', currentPlayer
 
-	cardPlayed: (gamePlayer, card) ->
+	cardPlayed: (gamePlayer, card, brokeHearts) ->
 		player = (@get 'players').findProperty 'id', gamePlayer.id
+
+		if brokeHearts
+			@gameQueue.queueEnd 'hearts broken', =>
+				(@get 'board').set 'heartsBroken', true
+
 		@gameQueue.queueEnd ('cardPlayed ' + card.repr()), =>
 			player.hand.playedCard card
 

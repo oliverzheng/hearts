@@ -103,7 +103,8 @@ root.App.ViewStates = Em.StateManager.extend
 
 					selectCard: (manager, card) ->
 						user = manager.game.get 'user'
-						if !user.played
+						controller = manager.game.get 'controller'
+						if !user.played && controller.game.canPlayCard user.gamePlayer, card.card
 							selected = user.hand.findProperty 'selected', true
 							if selected && selected isnt card
 								selected.set 'selected', false

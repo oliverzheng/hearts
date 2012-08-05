@@ -133,8 +133,16 @@ root.Game = class Game
 		return true
 
 	playCard: (card) ->
+		currentPlayer = @getCurrentPlayer()
+		currentPlayer.removeCard card
 		@cardsPlayed.push(card)
-		@output.cardPlayed(@getCurrentPlayer(), card)
+
+		brokeHearts = false
+		# Yes, the queen of spades breaks hearts too, as it should.
+		if !@heartsBroken && card.hasPoints()
+			@heartsBroken = true
+			brokeHearts = true
+		@output.cardPlayed(currentPlayer, card, brokeHearts)
 
 		if @canEndTrick()
 			@endTrick()

@@ -45,7 +45,7 @@ Card = Em.Object.extend
 
 
 model.UserCard = UserCard = Card.extend
-	card: null
+	card: null # TODO: rename to gameCard
 	selected: false
 	index: null
 	played: false
@@ -188,6 +188,7 @@ model.Board = Board = Em.Object.extend
 
 model.Player = Player = Em.Object.extend
 	id: null
+	gamePlayer: null
 	name: null
 	pictureUrl: null
 	seat: null
