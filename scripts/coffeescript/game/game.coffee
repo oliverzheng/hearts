@@ -38,7 +38,8 @@ root.Game = class Game
 
 	deal: ->
 		cards = Card.allCards()
-		# TODO shuffle!
+		shuffleArray cards
+
 		@players[0].dealtCards(cards[0..12])
 		@players[1].dealtCards(cards[13..25])
 		@players[2].dealtCards(cards[26..38])

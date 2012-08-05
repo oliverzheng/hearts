@@ -71,6 +71,7 @@ root.GameController = Em.Object.extend
 			userHand.pushObject model.UserCard.create
 				card: card
 				index: i
+				dealt: true
 
 		@gameQueue.queueEnd 'dealt', =>
 			(@get 'players').forEach (player) ->

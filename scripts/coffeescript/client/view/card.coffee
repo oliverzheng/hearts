@@ -18,15 +18,22 @@ root.CardView = Em.View.extend
 			queueAnimation @$(), @$('.card.passing')
 	).observes 'card.passing'
 
+	hasDealtAnimation: false
 	hasPassedAnimation: false
 
 	hide: ( ->
-		return (@getPath 'card.passed') && !@hasPassedAnimation
-	).property 'hasPassedAnimation', 'card.passed'
+		return ((@getPath 'card.dealt') && !@hasDealtAnimation) ||
+				((@getPath 'card.passed') && !@hasPassedAnimation)
+	).property 'hasDealtAnimation', 'hasPassedAnimation', 'card.passed'
 
-	# Passed is applied before we are in the DOM.
+	# dealt and passed are applied before we are in the DOM.
 	didInsertElement: ->
-		if (@getPath 'player.isSelf') && (@getPath 'card.passed')
+		if @getPath 'card.dealt'
+			animationD = queueAnimation @$(), @$('.card.dealt')
+			defer =>
+				@set 'hasDealtAnimation', true
+
+		else if (@getPath 'player.isSelf') && (@getPath 'card.passed')
 			animationD = queueAnimation @$(), @$('.card')
 			waitD = App.viewStates.queue.createDeferred 'waitForPassed'
 			defer =>

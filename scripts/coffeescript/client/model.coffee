@@ -51,6 +51,8 @@ model.UserCard = UserCard = Card.extend
 	played: false
 	inHand: true
 	finishing: false
+
+	dealt: false # Dealt by the dealer
 	passing: false # Passing to another player
 	finishedPassing: false
 	passed: false # Passed from another player
@@ -149,6 +151,7 @@ Hand.reopenClass
 		for i in [0..12]
 			card = UserCard.create
 				index: i
+				dealt: true
 
 			hand.pushObject card
 		return hand

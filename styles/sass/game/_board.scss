@@ -31,6 +31,12 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 		opacity: 0;
 	}
 }
+@include keyframes(self-dealt) {
+	from {
+		@include transform(translate($screenWidth * 0.45, $screenHeight * 0.4));
+		opacity: 0.4;
+	}
+}
 
 @include keyframes(self-played) {
 	to {
@@ -55,6 +61,8 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 
 #board {
 	$cardPlayDuration: 0.7s;
+	$cardDealDuration: 0.4s;
+	$cardDealInterval: 0.2s; // Delay between each card deal
 
 	@include full-screen();
 
@@ -65,19 +73,24 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 			height: $cardHeight;
 			width: $cardWidth;
 
+			&.inHand {
+				@include single-transition(transform, 0.2s, ease-out);
+			}
+
 			&.played {
 				@include animation-fill-mode(forwards);
 				@include animation-duration($cardPlayDuration);
 				@include animation-timing-function(ease-out);
 			}
+
+			&.dealt {
+				@include animation-fill-mode(backwards);
+				@include animation-duration($cardDealDuration);
+			}
 		}
 
 		.hand, .outer {
 			@include full-screen();
-		}
-
-		.card.inHand {
-			@include single-transition(transform, 0.2s, ease-out);
 		}
 
 		.hand {
@@ -122,11 +135,20 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 					@include animation(self-passed $cardPassDuration ease-out);
 					opacity: 1;
 				}
+
+				&.dealt {
+					@include animation-name(self-dealt);
+				}
+			}
+
+			@for $i from 0 to $totalCards {
+				.card#{$i} .card {
+					@include animation-delay($cardDealInterval * $i);
+				}
 			}
 
 			// This loop has to be in decreasing order. When a lower .hand{#} is
 			// applied, it has to override the higher one.
-			//@for $totalIncrease from 0 to $totalCards {
 			@for $totalIncrease from 0 to $totalCards {
 				$total: $totalCards - $totalIncrease;
 				.hand#{$total} {
@@ -164,6 +186,19 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 				&.played {
 					@include animation-name(across-played);
 				}
+
+				&.dealt {
+					/* TODO change this to across dealt so that the center pile
+						of cards are like a sunflower being dealt out. */
+					@include animation-name(self-dealt);
+				}
+			}
+
+			$cardDealDelay: $cardDealInterval / 4 * 2;
+			@for $i from 0 to $totalCards {
+				.card#{$i} .card {
+					@include animation-delay($cardDealInterval * $i + $cardDealDelay);
+				}
 			}
 
 			@for $totalIncrease from 0 to $totalCards {
@@ -192,6 +227,17 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 			.card {
 				&.played {
 					@include animation-name(left-played);
+				}
+
+				&.dealt {
+					@include animation-name(self-dealt);
+				}
+			}
+
+			$cardDealDelay: $cardDealInterval / 4 * 1;
+			@for $i from 0 to $totalCards {
+				.card#{$i} .card {
+					@include animation-delay($cardDealInterval * $i + $cardDealDelay);
 				}
 			}
 
@@ -222,6 +268,17 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 
 				&.played {
 					@include animation-name(right-played);
+				}
+
+				&.dealt {
+					@include animation-name(self-dealt);
+				}
+			}
+
+			$cardDealDelay: $cardDealInterval / 4 * 3;
+			@for $i from 0 to $totalCards {
+				.card#{$i} .card {
+					@include animation-delay($cardDealInterval * $i + $cardDealDelay);
 				}
 			}
 
