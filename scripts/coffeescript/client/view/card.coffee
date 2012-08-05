@@ -51,6 +51,11 @@ root.CardView = Em.View.extend
 					deferAfter 600, ->
 						waitD.resolve()
 
+	resetDealt: (->
+		if !(@getPath 'card.dealt')
+			@set 'hasDealtAnimation', false
+	).observes 'card.dealt'
+
 	resetPassed: (->
 		if !(@getPath 'card.passed')
 			@set 'hasPassedAnimation', false

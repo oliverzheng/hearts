@@ -81,6 +81,13 @@ root.GameController = Em.Object.extend
 					player.set 'hand', model.Hand.createUnknownHand()
 			App.viewStates.goToState 'round'
 
+		@gameQueue.queueEnd 'finish dealing', =>
+			(@get 'players').forEach (player) ->
+				player.hand.finishDealing()
+
+		@gameQueue.queueEnd 'sort cards', =>
+			(@get 'user').hand.sort()
+
 	passing: (pass) ->
 		@gameQueue.queueEnd 'passing', =>
 			(@get 'board').set 'passing', pass isnt Pass.Keep

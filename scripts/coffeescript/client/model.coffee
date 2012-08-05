@@ -72,8 +72,12 @@ model.Hand = Hand = Em.ArrayProxy.extend
 		if !@content
 			@set 'content', []
 
+	finishDealing: ->
+		@forEach (card) ->
+			card.set 'dealt', false
+
 	canPass: (->
-		((@.filterProperty 'selected', true).get 'length') is 3
+		((@filterProperty 'selected', true).get 'length') is 3
 	).property '@each.selected'
 
 	finishedPassing: ->
