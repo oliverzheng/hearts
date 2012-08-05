@@ -9,6 +9,12 @@
 		z-index: 20; // Above all cards
 	}
 
+	&.playersTurn {
+		.badge {
+			font-weight: bold;
+		}
+	}
+
 	&.self .badge {
 		bottom: 10%;
 		left: 30%;

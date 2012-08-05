@@ -116,14 +116,13 @@ root.GameController = Em.Object.extend
 			App.viewStates.goToState 'newTrick'
 			App.viewStates.goToState 'trick'
 			player.set 'firstToGo', true
-			App.viewStates.send 'startWith', player
 
 	playersTurn: (gamePlayer) ->
-		#@gameQueue.queueEnd 'nextPlayer', =>
-			#trick = (@get 'board').trick
-			#if !trick.get 'complete'
-				#nextPlayer = (@get 'players').findProperty 'seat', Seat.nextSeat player.seat
-				#App.viewStates.send 'nextPlayer', nextPlayer
+		@gameQueue.queueEnd 'nextPlayer', =>
+			trick = (@get 'board').trick
+			if !trick.get 'complete'
+				currentPlayer = (@get 'players').findProperty 'id', gamePlayer.id
+				App.viewStates.send 'setPlayer', currentPlayer
 
 	cardPlayed: (gamePlayer, card) ->
 		player = (@get 'players').findProperty 'id', gamePlayer.id

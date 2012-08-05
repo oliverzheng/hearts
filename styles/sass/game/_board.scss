@@ -142,7 +142,7 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 			}
 
 			@for $i from 0 to $totalCards {
-				.card#{$i} .card {
+				.card#{$i} .card.dealt {
 					@include animation-delay($cardDealInterval * $i);
 				}
 			}
@@ -196,7 +196,7 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 
 			$cardDealDelay: $cardDealInterval / 4 * 2;
 			@for $i from 0 to $totalCards {
-				.card#{$i} .card {
+				.card#{$i} .card.dealt {
 					@include animation-delay($cardDealInterval * $i + $cardDealDelay);
 				}
 			}
@@ -236,7 +236,7 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 
 			$cardDealDelay: $cardDealInterval / 4 * 1;
 			@for $i from 0 to $totalCards {
-				.card#{$i} .card {
+				.card#{$i} .card.dealt {
 					@include animation-delay($cardDealInterval * $i + $cardDealDelay);
 				}
 			}
@@ -265,7 +265,6 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 			position: relative;
 
 			.card {
-
 				&.played {
 					@include animation-name(right-played);
 				}
@@ -277,7 +276,7 @@ $cardWidth: $cardHeight * $cardWidthToHeight;
 
 			$cardDealDelay: $cardDealInterval / 4 * 3;
 			@for $i from 0 to $totalCards {
-				.card#{$i} .card {
+				.card#{$i} .card.dealt {
 					@include animation-delay($cardDealInterval * $i + $cardDealDelay);
 				}
 			}

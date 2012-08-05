@@ -87,7 +87,9 @@ root.Game = class Game
 
 		@output.newTrick(@getCurrentPlayer())
 
-		@getCurrentPlayer().pleasePlayCard()
+		currentPlayer = @getCurrentPlayer()
+		@output.playersTurn currentPlayer
+		currentPlayer.pleasePlayCard()
 
 	canPlayCard: (player, card) ->
 		if !player.hasCard card
@@ -138,7 +140,10 @@ root.Game = class Game
 			@endTrick()
 		else
 			@currentPlayerIndex = (@currentPlayerIndex + 1) % Game.playersPerGame
-			@getCurrentPlayer().pleasePlayCard()
+
+			currentPlayer = @getCurrentPlayer()
+			@output.playersTurn currentPlayer
+			currentPlayer.pleasePlayCard()
 
 	remotePlayerPlayed: (playerId, card) ->
 		@playCard card

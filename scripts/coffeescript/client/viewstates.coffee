@@ -74,7 +74,6 @@ root.App.ViewStates = Em.StateManager.extend
 						@_super stateManager, transition
 
 				trick: Em.ViewState.create
-					startingPlayer: null
 					currentPlayer: null
 					takingPlayer: null
 
@@ -96,22 +95,23 @@ root.App.ViewStates = Em.StateManager.extend
 							board = @getPath 'parentState.parentState.parentState.board'
 							board.trick.set 'ending', true
 
-					startWith: (manager, startingPlayer) ->
-						@set 'startingPlayer', startingPlayer
-						@set 'currentPlayer', startingPlayer
-
-					nextPlayer: (manager, player) ->
+					setPlayer: (manager, player) ->
 						@set 'currentPlayer', player
+
+						if (player is manager.game.get 'user') && (player.hand.someProperty 'selected', true)
+							player.set 'played', true
 
 					selectCard: (manager, card) ->
 						user = manager.game.get 'user'
 						if !user.played
-							card.toggleProperty 'selected'
 							selected = user.hand.findProperty 'selected', true
 							if selected && selected isnt card
-								selected.toggleProperty 'selected'
+								selected.set 'selected', false
 
-							user.set 'played', true
+							card.toggleProperty 'selected'
+
+							if card.selected && user is @currentPlayer
+								user.set 'played', true
 
 			tallyPoints: Em.ViewState.create
 				view: TallyPointsView
