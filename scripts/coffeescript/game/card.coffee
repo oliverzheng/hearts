@@ -21,7 +21,7 @@ root.Card = class Card
 	equals: (other) -> other.number is @number && other.suit is @suit
 
 	getPoints: ->
-		if @number is 13 and @suit is Spades
+		if @number is 12 and @suit is Spades
 			return 13
 		else if @suit is Hearts
 			return 1
@@ -42,7 +42,7 @@ root.TwoOfClubs = TwoOfClubs = new Card 2, Clubs
 
 root.compareNumber = (a, b) ->
 	if a is 1
-		return -1
+		return 1
 	if b is 1
 		return -1
 	return a - b
